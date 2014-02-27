@@ -5,6 +5,7 @@ __credits__ = ["Evan Bolyen"]
 
 from pyqi.core.command import (Command, CommandIn, CommandOut, 
     ParameterCollection)
+from qiimecharts.core.configuration import Configuration
 
 class RunConfiguration(Command):
     BriefDescription = "Generate charts from a configuration"
@@ -20,7 +21,8 @@ class RunConfiguration(Command):
                    Description='the resulting matplotlib plots')])
 
     def run(self, **kwargs):
-        
-        return {'result': []}
+        t = Configuration(kwargs['config'])
+        x = t.__run__()
+        return {'result': x}
 
 CommandConstructor = RunConfiguration

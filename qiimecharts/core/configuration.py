@@ -5,6 +5,7 @@ import csv
 from source import Source
 from mapping import Mapping
 from qchart import get_chart
+from biom.parse import parse_biom_table
 
 class Configuration(object):
 
@@ -28,7 +29,7 @@ class Configuration(object):
             biom = None
             restrict = None
             if 'biom' in value:
-                biom = open(value['biom'], 'U')
+                biom = parse_biom_table(open(value['biom'], 'U'))
 
             if 'restrict' in value:
                 restrict = (value['restrict']['column'], value['restrict']['values'])
@@ -61,14 +62,20 @@ class Configuration(object):
             for item in l:
                 if isinstance(item, dict):
                     for key, value in item.iteritems():
-                        if isinstance(value, str) and value.split(' ')[0] == '@var':
+                        if isinstance(value, unicode) and value.split(' ')[0] == '@var':
                             item[key] = p[value]
                         if key == 'y_stratification':
+                            item[key] = self.stratifications[value]
+                        elif key == 'x_stratification':
                             item[key] = self.stratifications[value]
                         elif key == 'source':
                             item[key] = self.sources[value]
                         elif key == 'data':
-                            item[key] = recursive_link(value, item)
+                            if isinstance(value, list):
+                                item[key] = recursive_link(value, item)
+                            else:
+                                item[key] = recursive_link([value], item)
+
             return l
 
         self.graphs = recursive_link(self.config['graphs'], self.config)

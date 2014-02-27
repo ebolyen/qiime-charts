@@ -17,10 +17,10 @@ def group_by_bin_factory(bins, default):
         dif = None
         best_bin = default
         for bin in bins.iterkeys():
-            if float(bin) > value:
+            if float(bin) > float(value):
                 continue
             else:
-                n_dif = value - float(bin)
+                n_dif = float(value) - float(bin)
                 if dif is None or n_dif < dif:
                     dif = n_dif
                     best_bin = bins[bin]

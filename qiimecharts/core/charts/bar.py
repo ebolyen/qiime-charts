@@ -15,9 +15,9 @@ class StackedBar(Chart):
 
 		if 'x_labels' in kwargs:
 			if scaled:
-				self.plot.set_xticklabels(kwargs['x_labels'])
+				self.plot.set_xticklabels(kwargs['x_labels'], rotation=90)
 			else:
-				self.plot.set_xticklabels([label + " (n=%d)" % sum(data[i]) for i, label in enumerate(kwargs['x_labels'])])
+				self.plot.set_xticklabels([label + " (n=%d)" % sum(data[i]) for i, label in enumerate(kwargs['x_labels'])], rotation=90)
 
 
 		self.plot.set_xticks(ind)
@@ -39,22 +39,34 @@ class StackedBar(Chart):
 
 		if 'legend' in kwargs and kwargs['legend']:
 			if not ('legend_outside' in kwargs and kwargs['legend_outside']):
-				legend = self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True)
+				legend = None
+				if 'legend_size' in kwargs:
+					legend = self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True, prop={'size':kwargs['legend_size']})
+				else:
+					legend = self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True)
 				legend.get_frame().set_alpha(0.5)
 			else:
-				self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True)
+				raise Exception("'legend_outside' is not yet implemented")
+				self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True, prop={'size':kwargs['legend_size']})
 
 
 
 class Bar(StackedBar):
 
-	def __init__(self, name, data, normalized=True, y_stratification=None, **kwargs):
-		pass
+	def __init__(self, name, data, **kwargs):
+		super(Bar, self).__init__(name, self._psuedo_stack(data), **kwargs)
+
+	def _psuedo_stack(self, data):
+		stacked = []
+		for i, bar in enumerate(data):
+			stacked.append([0 for x in range(len(data))])
+			stacked[i][i] = bar
+		return stacked
 
 
 
 def denormalize(data):
-	return [[float(e)/sum(v) for e in v] for v in data]
+	return [[float(e)/sum(v) * 100 for e in v] for v in data]
 
 def add_lists_pairwise(l1, l2):
 	return [sum(x) for x in zip(l1, l2)]

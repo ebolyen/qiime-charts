@@ -23,18 +23,11 @@ usage_examples = [
 inputs = [
     OptparseOption(Parameter=cmd_in_lookup('config'),
                    Handler=load_file_contents,
-                   ShortName='i'),
-    OptparseOption(Parameter=None,
-                   Type='new_filepath',
-                   ShortName='o',
-                   Name='output-fp',
-                   Required=True,
-                   Help='output filepath to store generated charts')
+                   ShortName='i')
 ]
 
 outputs = [
     ### InputName is used to tie this output to output-fp, which is an input...
     OptparseResult(Parameter=cmd_out_lookup('result'),
-                   Handler=write_list_of_figures,
-                   InputName='output-fp')
+                   Handler=write_list_of_figures)
 ]
