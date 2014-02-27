@@ -1,6 +1,5 @@
 from qiimecharts.core.charts.base import Chart
 import matplotlib.pyplot as plt
-#from qiimecharts.core.colors.default import ColorGen as default_colors
 
 class StackedBar(Chart):
 
@@ -24,30 +23,21 @@ class StackedBar(Chart):
 		self.plot.set_xlim([min(ind) - (0.75 * width), max(ind) + (0.75 * width)])
 
 		bottom = 0
-		bars = []
+		self.elements = []
 		for observation_data in n_data:
 			bar = self.plot.bar(ind, observation_data, width, 
 						  color=self.colors.next(),
 						  bottom=bottom, 
 						  align='center',
 						  linewidth=0)
-			bars.append(bar)
+			self.elements.append(bar)
 			if bottom == 0:
 				bottom = observation_data
 			else:
 				bottom = add_lists_pairwise(bottom, observation_data)
 
-		if 'legend' in kwargs and kwargs['legend']:
-			if not ('legend_outside' in kwargs and kwargs['legend_outside']):
-				legend = None
-				if 'legend_size' in kwargs:
-					legend = self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True, prop={'size':kwargs['legend_size']})
-				else:
-					legend = self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True)
-				legend.get_frame().set_alpha(0.5)
-			else:
-				raise Exception("'legend_outside' is not yet implemented")
-				self.plot.legend(bars[::-1], kwargs['y_labels'][::-1], loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True, prop={'size':kwargs['legend_size']})
+		self._load_legend(**kwargs)
+		
 
 
 

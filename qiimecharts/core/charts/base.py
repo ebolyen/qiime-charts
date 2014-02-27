@@ -50,6 +50,22 @@ class Chart(object):
         # This feels weird, but I don't have time to care. Will come back to this to refactor.
         return ([i.next() for _ in range(count)], width)
 
+    def _load_legend(self, **kwargs):
+        if 'legend' in kwargs and kwargs['legend']:
+            if not ('legend_outside' in kwargs and kwargs['legend_outside']):
+                legend = None
+                if 'legend_size' in kwargs:
+                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True, prop={'size':kwargs['legend_size']})
+                else:
+                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True)
+                legend.get_frame().set_alpha(0.5)
+                if 'changer' in kwargs:
+                    kwargs['changer'](legend)
+
+            else:
+                raise Exception("'legend_outside' is not yet implemented")
+                self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True, prop={'size':kwargs['legend_size']})
+
     def save(self, path=''):
         self._fig.tight_layout()
         self._fig.subplots_adjust(top=0.85)
