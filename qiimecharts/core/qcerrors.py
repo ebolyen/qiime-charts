@@ -1,0 +1,3 @@
+
+def ConfigError(Exception):
+	pass
