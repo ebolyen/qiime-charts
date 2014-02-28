@@ -4,6 +4,7 @@ import numpy as np
 
 class Chart(object): 
     def __init__(self, name, transparent=False, **kwargs):
+        self.elements = []
         self.transparent = transparent
         self.name = name
         if 'dimension' in kwargs:
@@ -75,4 +76,3 @@ class Chart(object):
         self._fig.tight_layout()
         self._fig.subplots_adjust(top=0.85)
         self._fig.show()
-

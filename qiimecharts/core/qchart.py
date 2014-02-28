@@ -1,5 +1,21 @@
 import groupers as gp
 from charts.bar import StackedBar, Bar
+from charts.pie import Pie 
+from charts.legend import Legend
+
+def pie(name, data, y_stratification, title=None, legend=True, **kwargs):
+    pass
+
+
+def legend(name, y_stratification, title=None, **kwargs):
+
+    y_labels = []
+    colors = []
+    for y in y_stratification:
+        y_labels.insert(0, y['display'])
+        colors.insert(0, y['color'])
+
+    return Legend(name, colors=colors, y_labels=y_labels, title=title, **kwargs)
 
 def stacked_bar(name, data, y_stratification,
                 title=None,
@@ -79,6 +95,10 @@ def bar(name, data, x_stratification, title=None, **kwargs):
 
 def get_chart(graph):
     return {
+        'legend': lambda : legend(graph['name'], graph['y_stratification'],
+                                title=(None if 'title' not in graph else graph['title']),
+                                dimension=(None if 'dimension' not in graph else graph['dimension']),
+                                legend_size=(None if 'legend_size' not in graph else graph['legend_size'])),
         'stackedbar': lambda : stacked_bar(graph['name'],
                                             graph['data'],
                                             graph['y_stratification'],
