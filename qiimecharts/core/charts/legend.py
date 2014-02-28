@@ -20,10 +20,14 @@ class Legend(Chart):
         else:
             self._fig = plt.figure()
 
+        if 'title' in kwargs:
+            self._fig.suptitle(kwargs['title'], fontsize=20)
+            
         if 'legend_size' in kwargs:
             legend = self._fig.legend(dummy[::-1], kwargs['y_labels'][::-1], fancybox=True, loc='center', prop={'size':kwargs['legend_size']})
         else:
             legend = self._fig.legend(dummy[::-1], kwargs['y_labels'][::-1], loc='center', fancybox=True)
+
 
 
 
