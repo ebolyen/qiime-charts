@@ -23,6 +23,7 @@ def stacked_bar(name, data, y_stratification,
                 legend=True, **kwargs):
     x_labels = []
     bar_data = []
+    n_values = []
     for dp in data:
         x_labels.append(dp['display'])
         source = dp['source']
@@ -40,6 +41,8 @@ def stacked_bar(name, data, y_stratification,
             else:
                 totals[grouper(key)] = value
 
+        if not scaled:
+            n_values.append(source.count)
 
         colors = []
         y_labels = []
@@ -57,6 +60,7 @@ def stacked_bar(name, data, y_stratification,
                       scaled=scaled,
                       x_labels=x_labels,
                       y_labels=y_labels,
+                      n_values=n_values,
                       colors=colors,
                       legend=legend,
                       title=title, **kwargs)

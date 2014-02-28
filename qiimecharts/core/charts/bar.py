@@ -16,7 +16,7 @@ class StackedBar(Chart):
 			if scaled:
 				self.plot.set_xticklabels(kwargs['x_labels'], rotation=90)
 			else:
-				self.plot.set_xticklabels([label + " (n=%d)" % sum(data[i]) for i, label in enumerate(kwargs['x_labels'])], rotation=90)
+				self.plot.set_xticklabels([label + " (n=%d)" % kwargs['n_values'][i] for i, label in enumerate(kwargs['x_labels'])], rotation=90)
 
 
 		self.plot.set_xticks(ind)

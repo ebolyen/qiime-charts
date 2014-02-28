@@ -8,6 +8,7 @@ class Source(object):
         self.biom = biom
         self.m_cache = {}
         self.b_cache = {}
+        self.count = len(mapping.sample_ids)
         if restrict is not None:
             new_source = self.restrict(restrict[0], restrict[1])
             self.__init__(new_source.name, new_source.mapping, biom=new_source.biom)
