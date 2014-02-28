@@ -26,6 +26,9 @@ def stacked_bar(name, data, y_stratification,
     for dp in data:
         x_labels.append(dp['display'])
         source = dp['source']
+        if 'restrict' in dp:
+            source = source.restrict(dp['restrict']['column'], dp['restrict']['values'])
+
         grouper = gp.get_grouper(dp)
 
         column_totals = source.column_totals(dp['column'])

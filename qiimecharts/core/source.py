@@ -32,7 +32,10 @@ class Source(object):
             def do_obs(c):
                 raise Exception("Restriction on observations are not yet implemented")
 
-            return self._biom_if_sample_else_observation(do_sample, do_obs)
+            def do_tax(c):
+                raise Exception("Restriction on taxa are not yet implemented")
+
+            return self._parse_descriptors(column, {"@observations":do_sample, "@samples":do_obs, "@taxa": do_tax}, do_sample)
 
         def do_mapping(p_column):
             samples = self.mapping.get_samples(column=p_column, values=values)
@@ -46,7 +49,7 @@ class Source(object):
 
             return Source(self.name, mapping, biom=biom)
 
-        return self._if_biom_else_mapping(column, do_biom, do_mapping)
+        return self._parse_descriptors(column, {"@biom":do_biom, "@mapping":do_mapping}, do_mapping)
 
 
 
@@ -63,7 +66,7 @@ class Source(object):
     def column_totals(self, column):
         """Return a dictionary where the key is the column value and the value
            is a count of samples"""
-        return self._if_biom_else_mapping(column, self._resolve_biom_column, self._resolve_mapping_column)
+        return self._parse_descriptors(column, {"@biom":self._resolve_biom_column, "@mapping":self._resolve_mapping_column}, self._resolve_mapping_column)
 
     def _resolve_mapping_column(self, p_column):
         """Help ``_resolve_column``"""
@@ -86,14 +89,31 @@ class Source(object):
         if p_column in self.b_cache:
             return self.b_cache[p_column]
 
-        column_count = {}
+        def do_sample(c):
+            return self._metadata_column(c, False)
 
+        def do_obs(c):
+            return self._metadata_column(c, True)
+
+        def do_tax(c):
+            return self._taxon_column(int(c))       
+
+        column_count = self._parse_descriptors(p_column, {"@samples":do_sample, "@observations": do_obs, "@taxa": do_tax}, do_sample)
         # These operations are expensive so lets cache it 
         self.b_cache[p_column] = column_count
         return column_count
 
     def _validate_biom_column(self, column):
         pass
+
+
+    def _parse_descriptors(self, column, action_dict, default):
+        p_column = ""
+        tokenized = column.split(' ')
+        if tokenized[0] in action_dict:
+            return action_dict[tokenized[0]](column[len(tokenized[0])+1:])
+        else:
+            return default(column)
 
     def _if_biom_else_mapping(self, column, do_biom, do_mapping):
         p_column = ""
@@ -120,3 +140,35 @@ class Source(object):
         else:
             p_column = column
         return do_sample(p_column)
+
+    def _metadata_column(self, column, is_observation, metadata_handler=None):
+        result = {}
+        def collapse_metadata(metadata):
+            if column in metadata:
+                if metadata_handler:
+                    return metadata_handler(metadata[column])
+                return metadata[column]
+            return "__unkown__"
+
+        if is_observation:
+            t = self.biom.collapseObservationsByMetadata(collapse_metadata, 
+                                         include_collapsed_metadata=False, 
+                                         norm=False) 
+            for key, value in zip(t.ObservationIds, t.sum(axis="observation")):
+                result[key] = value
+
+        else:
+            t = self.biom.collapseSamplesByMetadata(collapse_metadata, 
+                                         include_collapsed_metadata=False, 
+                                         norm=False) 
+            for key, value in zip(t.SampleIds, t.sum(axis="sample")):
+                result[key] = value
+        return result
+
+    def _taxon_column(self, level):
+        def collapse_taxon(data):
+            bin = data[level].strip()[3:]
+            if bin:
+                return bin
+            return 'unkown_taxa'
+        return self._metadata_column("taxonomy", True, collapse_taxon)

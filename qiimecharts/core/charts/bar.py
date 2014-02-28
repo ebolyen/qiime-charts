@@ -56,7 +56,7 @@ class Bar(StackedBar):
 
 
 def denormalize(data):
-	return [[float(e)/sum(v) * 100 for e in v] for v in data]
+	return [[float(e)/sum(v) for e in v] for v in data]
 
 def add_lists_pairwise(l1, l2):
 	return [sum(x) for x in zip(l1, l2)]
