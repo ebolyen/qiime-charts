@@ -153,15 +153,13 @@ class Source(object):
 
         if is_observation:
             t = self.biom.collapseObservationsByMetadata(collapse_metadata, 
-                                         include_collapsed_metadata=False, 
-                                         norm=False) 
+                                         include_collapsed_metadata=False) 
             for key, value in zip(t.ObservationIds, t.sum(axis="observation")):
                 result[key] = value
 
         else:
             t = self.biom.collapseSamplesByMetadata(collapse_metadata, 
-                                         include_collapsed_metadata=False, 
-                                         norm=False) 
+                                         include_collapsed_metadata=False) 
             for key, value in zip(t.SampleIds, t.sum(axis="sample")):
                 result[key] = value
         return result

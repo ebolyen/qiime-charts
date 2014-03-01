@@ -25,11 +25,16 @@ class Configuration(object):
         self.sources = {}
         for key, value in self.config['sources'].iteritems():
             name = key
-            mapping = Mapping(mapping_file_object=open(value['mapping'], 'U'))
+            f = open(value['mapping'], 'U')
+            mapping = Mapping(mapping_file_object=f)
+            f.close()
+            
             biom = None
             restrict = None
             if 'biom' in value:
-                biom = parse_biom_table(open(value['biom'], 'U'))
+                f = open(value['biom'], 'U')
+                biom = parse_biom_table(f)
+                f.close()
 
             if 'restrict' in value:
                 restrict = (value['restrict']['column'], value['restrict']['values'])
