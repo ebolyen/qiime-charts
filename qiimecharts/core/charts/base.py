@@ -2,7 +2,6 @@
 from matplotlib import use
 use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 class Chart(object):
@@ -10,10 +9,10 @@ class Chart(object):
         self.elements = []
         self.transparent = transparent
         self.name = name
-        if 'dimension' in kwargs:
-            self._fig = plt.figure(figsize=kwargs['dimension'], dpi=80,)
-        else:
-            self._fig = plt.figure()
+
+        self._fig = plt.figure(figsize=kwargs.get('dimension', (4, 3.5)),
+                               dpi=kwargs.get('dpi', 80))
+
         self._fig.canvas.manager.set_window_title(name)
         self.plot = self._fig.add_subplot(1, 1, 1)
 
@@ -27,6 +26,8 @@ class Chart(object):
             self.padding = kwargs['x_padding']
         else:
             self.padding = 0.5
+
+        self.format = kwargs.get('format', 'png')
 
         if 'colors' not in kwargs:
             raise Exception("COLORS")
@@ -56,10 +57,19 @@ class Chart(object):
         if 'legend' in kwargs and kwargs['legend']:
             if not ('legend_outside' in kwargs and kwargs['legend_outside']):
                 legend = None
+                loc = kwargs.get('legend_loc', None)
+                legend_size = kwargs.get('legend_size', None)
+                y_labels = kwargs.get('y_labels', [])
                 if 'legend_size' in kwargs:
-                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc=kwargs['legend_loc'], fancybox=True, prop={'size':kwargs['legend_size']})
+                    legend = self.plot.legend(self.elements[::-1],
+                                              y_labels[::-1],
+                                              loc=loc, fancybox=True,
+                                              prop={'size': legend_size})
                 else:
-                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc=kwargs['legend_loc'], fancybox=True)
+                    legend = self.plot.legend(self.elements[::-1],
+                                              y_labels[::-1],
+                                              loc=loc,
+                                              fancybox=True)
                 legend.get_frame().set_alpha(0.5)
                 if 'changer' in kwargs:
                     kwargs['changer'](legend)
@@ -71,7 +81,7 @@ class Chart(object):
     def save(self, path=''):
         self._fig.tight_layout()
         self._fig.subplots_adjust(top=0.85)
-        self._fig.savefig(path+self.name+'.png', format='png', transparent=self.transparent)
+        self._fig.savefig(path+self.name + self.format, format=self.format, transparent=self.transparent)
 
     def show(self):
         self._fig.tight_layout()

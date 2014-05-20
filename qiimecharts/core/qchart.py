@@ -102,24 +102,7 @@ def bar(name, data, x_stratification, title=None, **kwargs):
 
 def get_chart(graph):
     return {
-        'legend': lambda : legend(graph['name'], graph['y_stratification'],
-                                title=(None if 'title' not in graph else graph['title']),
-                                dimension=(None if 'dimension' not in graph else graph['dimension']),
-                                legend_size=(None if 'legend_size' not in graph else graph['legend_size'])),
-        'stackedbar': lambda : stacked_bar(graph['name'],
-                                            graph['data'],
-                                            graph['y_stratification'],
-                                            title=(None if 'title' not in graph else graph['title']),
-                                            dimension=(None if 'dimension' not in graph else graph['dimension']),
-                                            scaled=(None if 'scaled' not in graph else graph['scaled']),
-                                            legend_size=(None if 'legend_size' not in graph else graph['legend_size']),
-                                            legend=(None if 'legend' not in graph else graph['legend']),
-                                            legend_loc=graph.get('legend_loc', 'best'),
-                                            y_label=graph.get('y_label', None)),
-        'bar': lambda : bar(graph['name'],
-                            graph['data'],
-                            graph['x_stratification'],
-                            dimension=(None if 'dimension' not in graph else graph['dimension']),
-                            title=(None if 'title' not in graph else graph['title']),
-                            y_label=graph.get('y_label', None)),
+        'legend': lambda : legend(**graph),
+        'stackedbar': lambda : stacked_bar(**graph),
+        'bar': lambda : bar(**graph)
     }[graph['type']]()
