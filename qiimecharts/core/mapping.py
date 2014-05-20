@@ -17,12 +17,20 @@ class Mapping(object):
             self._samples_by_id[id_] = sample
 
 
-    def get_samples(self, column=None, values=None):
+    def get_samples(self, column=None, values=None, unique=None):
         if column is not None and values is not None:
             filtered_samples = []
-            for sample in self._samples:
-                if sample[column] in values:
-                    filtered_samples.append(sample)
+            if unique is None:
+                for sample in self._samples:
+                    if sample[column] in values:
+                        filtered_samples.append(sample)
+            else:
+                seen = set()
+                for sample in self._samples:
+                    if sample[column] in values and sample[unique] not in seen:
+                        seen.add(sample[unique])
+                        filtered_samples.append(sample)
+
             return filtered_samples
         return self._samples
 

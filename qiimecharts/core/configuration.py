@@ -6,6 +6,7 @@ from source import Source
 from mapping import Mapping
 from qchart import get_chart
 from biom.parse import parse_biom_table
+from biom.util import biom_open
 
 class Configuration(object):
 
@@ -28,16 +29,15 @@ class Configuration(object):
             f = open(value['mapping'], 'U')
             mapping = Mapping(mapping_file_object=f)
             f.close()
-            
+
             biom = None
             restrict = None
             if 'biom' in value:
-                f = open(value['biom'], 'U')
-                biom = parse_biom_table(f)
-                f.close()
+                with biom_open(value['biom'], 'U') as f:
+                    biom = parse_biom_table(f)
 
             if 'restrict' in value:
-                restrict = (value['restrict']['column'], value['restrict']['values'])
+                restrict = (value['restrict']['column'], value['restrict']['values'], value['restrict'].get('unique', None))
 
             self.sources[key] = Source(name, mapping, biom=biom, restrict=restrict)
 

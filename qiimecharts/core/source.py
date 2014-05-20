@@ -1,7 +1,7 @@
 from mapping import Mapping
 
 class Source(object):
-    
+
     def __init__(self, name, mapping, biom=None, restrict=None):
         self.name = name
         self.mapping = mapping
@@ -10,10 +10,10 @@ class Source(object):
         self.b_cache = {}
         self.count = len(mapping.sample_ids)
         if restrict is not None:
-            new_source = self.restrict(restrict[0], restrict[1])
+            new_source = self.restrict(restrict[0], restrict[1], restrict[2])
             self.__init__(new_source.name, new_source.mapping, biom=new_source.biom)
 
-    def restrict(self, column, values):
+    def restrict(self, column, values, unique=None):
         """Return a new Source object which contains only entries which have
            an entry from ``values`` in column"""
         def do_biom(p_column):
@@ -24,7 +24,7 @@ class Source(object):
                     if is_subset:
                         sample_ids.append(id_)
                     return is_subset
-                biom = self.biom.filterSamples(f)
+                biom = self.biom.filter(f, axis='sample')
                 samples = [self.mapping.get_sample(i) for i in sample_ids]
                 mapping = Mapping(sample_list=samples)
 
@@ -39,14 +39,14 @@ class Source(object):
             return self._parse_descriptors(column, {"@observations":do_sample, "@samples":do_obs, "@taxa": do_tax}, do_sample)
 
         def do_mapping(p_column):
-            samples = self.mapping.get_samples(column=p_column, values=values)
+            samples = self.mapping.get_samples(column=p_column, values=values, unique=unique)
             mapping = Mapping(sample_list=samples)
 
             biom = None
             if self.biom is not None:
                 def f(value, id_, metadata):
                     return True if mapping.get_sample(id_) is not None else False
-                biom = self.biom.filterSamples(f)
+                biom = self.biom.filter(f)
 
             return Source(self.name, mapping, biom=biom)
 
@@ -55,7 +55,7 @@ class Source(object):
 
 
     def sum_by_column(self, column, values):
-        """Return a count of all samples which whos column contains an entry 
+        """Return a count of all samples which whos column contains an entry
            from ``values``"""
         count = 0
         column_count = self.column_totals(column)
@@ -81,7 +81,7 @@ class Source(object):
                 column_count[sample[p_column]] += 1
             else:
                 column_count[sample[p_column]] = 1
-        # These operations are expensive so lets cache it 
+        # These operations are expensive so lets cache it
         self.m_cache[p_column] = column_count
         return column_count
 
@@ -97,10 +97,10 @@ class Source(object):
             return self._metadata_column(c, True)
 
         def do_tax(c):
-            return self._taxon_column(int(c))       
+            return self._taxon_column(int(c))
 
         column_count = self._parse_descriptors(p_column, {"@samples":do_sample, "@observations": do_obs, "@taxa": do_tax}, do_sample)
-        # These operations are expensive so lets cache it 
+        # These operations are expensive so lets cache it
         self.b_cache[p_column] = column_count
         return column_count
 
@@ -152,14 +152,14 @@ class Source(object):
             return "__unkown__"
 
         if is_observation:
-            t = self.biom.collapseObservationsByMetadata(collapse_metadata, 
-                                         include_collapsed_metadata=False) 
+            t = self.biom.collapseObservationsByMetadata(collapse_metadata,
+                                         include_collapsed_metadata=False)
             for key, value in zip(t.ObservationIds, t.sum(axis="observation")):
                 result[key] = value
 
         else:
-            t = self.biom.collapseSamplesByMetadata(collapse_metadata, 
-                                         include_collapsed_metadata=False) 
+            t = self.biom.collapseSamplesByMetadata(collapse_metadata,
+                                         include_collapsed_metadata=False)
             for key, value in zip(t.SampleIds, t.sum(axis="sample")):
                 result[key] = value
         return result
