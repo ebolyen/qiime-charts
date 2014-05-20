@@ -1,8 +1,11 @@
 
+from matplotlib import use
+use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
-class Chart(object): 
+
+class Chart(object):
     def __init__(self, name, transparent=False, **kwargs):
         self.elements = []
         self.transparent = transparent
@@ -24,8 +27,6 @@ class Chart(object):
             self.padding = kwargs['x_padding']
         else:
             self.padding = 0.5
-
-        
 
         if 'colors' not in kwargs:
             raise Exception("COLORS")
@@ -56,9 +57,9 @@ class Chart(object):
             if not ('legend_outside' in kwargs and kwargs['legend_outside']):
                 legend = None
                 if 'legend_size' in kwargs:
-                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True, prop={'size':kwargs['legend_size']})
+                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc=kwargs['legend_loc'], fancybox=True, prop={'size':kwargs['legend_size']})
                 else:
-                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc='best', fancybox=True)
+                    legend = self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc=kwargs['legend_loc'], fancybox=True)
                 legend.get_frame().set_alpha(0.5)
                 if 'changer' in kwargs:
                     kwargs['changer'](legend)
