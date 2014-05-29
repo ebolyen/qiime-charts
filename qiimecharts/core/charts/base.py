@@ -57,7 +57,7 @@ class Chart(object):
         if 'legend' in kwargs and kwargs['legend']:
             if not ('legend_outside' in kwargs and kwargs['legend_outside']):
                 legend = None
-                loc = kwargs.get('legend_loc', None)
+                loc = kwargs.get('legend_loc', 'best')
                 legend_size = kwargs.get('legend_size', None)
                 y_labels = kwargs.get('y_labels', [])
                 if 'legend_size' in kwargs:
@@ -81,7 +81,7 @@ class Chart(object):
     def save(self, path=''):
         self._fig.tight_layout()
         self._fig.subplots_adjust(top=0.85)
-        self._fig.savefig(path+self.name + self.format, format=self.format, transparent=self.transparent)
+        self._fig.savefig(path+ self.name + '.' + self.format, format=self.format, transparent=self.transparent)
 
     def show(self):
         self._fig.tight_layout()

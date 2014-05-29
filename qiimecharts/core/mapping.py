@@ -1,5 +1,9 @@
 import csv
 
+class AllTrue(object):
+    def __contains__(self, other):
+        return True
+
 class Mapping(object):
     def __init__(self, mapping_file_object=None, sample_list=None):
         if mapping_file_object is None and sample_list is None:
@@ -18,6 +22,9 @@ class Mapping(object):
 
 
     def get_samples(self, column=None, values=None, unique=None):
+        if values == '*':
+            values = AllTrue()
+
         if column is not None and values is not None:
             filtered_samples = []
             if unique is None:
