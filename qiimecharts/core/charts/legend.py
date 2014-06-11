@@ -34,7 +34,7 @@ class Legend(Chart):
 
 
     def save(self, path=''):
-        self._fig.savefig(path + self.name + self.format, format=self.format,
+        self._fig.savefig(path + self.name + '.' + self.format, format=self.format,
                           transparent=self.transparent)
 
     def show(self):
