@@ -21,7 +21,6 @@ class StackedBar(Chart):
                 self.plot.set_xticklabels([label + " (n=%d)" % kwargs['n_values'][i] for i, label in enumerate(kwargs['x_labels'])],
                                           rotation=rot, ha=ha)
 
-
         self.plot.set_xticks(ind)
         self.plot.set_xlim([min(ind) - (0.75 * width), max(ind) + (0.75 * width)])
 

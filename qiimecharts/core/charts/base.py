@@ -25,6 +25,9 @@ class Chart(object):
         if 'ygrid' in kwargs and kwargs['ygrid']:
             self.plot.axes.yaxis.grid(True)
 
+        if 'y_ticks' in kwargs and not kwargs['y_ticks']:
+            self.plot.axes.get_yaxis().set_visible(False)
+
         if 'title' in kwargs:
             self._fig.suptitle(kwargs['title'], fontsize=20)
 
