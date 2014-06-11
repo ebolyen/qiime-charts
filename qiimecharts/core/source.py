@@ -51,7 +51,7 @@ class Source(object):
                 mapping = Mapping(sample_list=samples)
 
             return Source(self.name, mapping, biom=biom)
-        
+
         return self._parse_descriptors(column, {"@biom":do_biom, "@mapping":do_mapping}, do_mapping)
 
 
@@ -114,9 +114,6 @@ class Source(object):
         p_column = ""
         tokenized = column.split(' ')
         if tokenized[0] in action_dict:
-            print action_dict
-            print tokenized[0]
-            print column[len(tokenized[0])+1:], action_dict[tokenized[0]]
             return action_dict[tokenized[0]](column[len(tokenized[0])+1:])
         else:
             return default(column)
