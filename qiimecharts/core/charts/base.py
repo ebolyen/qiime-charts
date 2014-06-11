@@ -19,6 +19,12 @@ class Chart(object):
         if 'ylim' in kwargs:
             self.plot.set_ylim(kwargs['ylim'])
 
+        if 'xgrid' in kwargs and kwargs['xgrid']:
+            self.plot.axes.xaxis.grid(True)
+
+        if 'ygrid' in kwargs and kwargs['ygrid']:
+            self.plot.axes.yaxis.grid(True)
+
         if 'title' in kwargs:
             self._fig.suptitle(kwargs['title'], fontsize=20)
 
