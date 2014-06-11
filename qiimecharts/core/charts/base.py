@@ -82,7 +82,6 @@ class Chart(object):
                                               y_labels[::-1],
                                               loc=loc,
                                               fancybox=True)
-                legend.get_frame().set_alpha(0.5)
                 if 'changer' in kwargs:
                     kwargs['changer'](legend)
 

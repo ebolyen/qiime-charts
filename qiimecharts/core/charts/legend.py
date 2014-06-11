@@ -14,6 +14,7 @@ class Legend(Chart):
 
         dummy = dummy_axes.bar(ind, data, width, color=[self.colors.next() for x in data])
 
+        self.format = kwargs.get('format', 'png')
 
         if 'dimension' in kwargs:
             self._fig = plt.figure(figsize=kwargs['dimension'], dpi=80,)
@@ -22,7 +23,7 @@ class Legend(Chart):
 
         if 'title' in kwargs:
             self._fig.suptitle(kwargs['title'], fontsize=20)
-            
+
         if 'legend_size' in kwargs:
             legend = self._fig.legend(dummy[::-1], kwargs['y_labels'][::-1], fancybox=True, loc='center', prop={'size':kwargs['legend_size']})
         else:
@@ -33,7 +34,8 @@ class Legend(Chart):
 
 
     def save(self, path=''):
-        self._fig.savefig(path+self.name+'.png', format='png', transparent=self.transparent)
+        self._fig.savefig(path + self.name + self.format, format=self.format,
+                          transparent=self.transparent)
 
     def show(self):
         self._fig.show()
