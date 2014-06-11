@@ -26,7 +26,7 @@ class Chart(object):
             self.plot.axes.yaxis.grid(True)
 
         if 'y_ticks' in kwargs and not kwargs['y_ticks']:
-            self.plot.axes.get_yaxis().set_visible(False)
+            self.plot.axes.get_yaxis().set_ticklabels([''])
 
         if 'title' in kwargs:
             self._fig.suptitle(kwargs['title'], fontsize=20)
