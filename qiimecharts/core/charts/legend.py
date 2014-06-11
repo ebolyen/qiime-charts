@@ -11,6 +11,7 @@ class Legend(Chart):
         ind = range(len(kwargs['y_labels']))
         width = 1
         data = range(len(kwargs['y_labels']))
+        font_family = kwargs.get('font_family', None)
 
         dummy = dummy_axes.bar(ind, data, width, color=[self.colors.next() for x in data])
 
@@ -25,7 +26,8 @@ class Legend(Chart):
             self._fig.suptitle(kwargs['title'], fontsize=20)
 
         if 'legend_size' in kwargs:
-            legend = self._fig.legend(dummy[::-1], kwargs['y_labels'][::-1], fancybox=True, loc='center', prop={'size':kwargs['legend_size']})
+            legend = self._fig.legend(dummy[::-1], kwargs['y_labels'][::-1], fancybox=True, loc='center', prop={'size':kwargs['legend_size'],
+                                                                                                                'family': font_family})
         else:
             legend = self._fig.legend(dummy[::-1], kwargs['y_labels'][::-1], loc='center', fancybox=True)
 

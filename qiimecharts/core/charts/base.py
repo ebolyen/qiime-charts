@@ -39,10 +39,6 @@ class Chart(object):
         else:
             self.padding = 0.5
 
-        if 'fontsize' in kwargs:
-            self.plot.axes.yaxis.label.set_size(kwargs['fontsize'])
-            self.plot.axes.xaxis.label.set_size(kwargs['fontsize'])
-
         self.format = kwargs.get('format', 'png')
 
         if 'colors' not in kwargs:
@@ -76,16 +72,20 @@ class Chart(object):
                 loc = kwargs.get('legend_loc', 'best')
                 legend_size = kwargs.get('legend_size', None)
                 y_labels = kwargs.get('y_labels', [])
+                font_family = kwargs.get('font_family', None)
+
                 if 'legend_size' in kwargs:
                     legend = self.plot.legend(self.elements[::-1],
                                               y_labels[::-1],
                                               loc=loc, fancybox=True,
-                                              prop={'size': legend_size})
+                                              prop={'size': legend_size,
+                                                    'family': font_family})
                 else:
                     legend = self.plot.legend(self.elements[::-1],
                                               y_labels[::-1],
                                               loc=loc,
-                                              fancybox=True)
+                                              fancybox=True,
+                                              prop={'family': font_family})
                 if 'changer' in kwargs:
                     kwargs['changer'](legend)
 

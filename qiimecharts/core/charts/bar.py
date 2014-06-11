@@ -13,13 +13,18 @@ class StackedBar(Chart):
         ind, width = self._even_spacing_factory(len(data), self.padding)
         rot = kwargs.get('x_label_rotation', 90)
         ha = kwargs.get('x_labels_alignment', 'center')
+        fontsize = kwargs.get('fontsize', None)
+        font_family = kwargs.get('font_family', None)
 
         if 'x_labels' in kwargs:
             if scaled:
-                self.plot.set_xticklabels(kwargs['x_labels'], rotation=rot, ha=ha)
+                self.plot.set_xticklabels(kwargs['x_labels'], rotation=rot,
+                                          ha=ha, fontsize=fontsize,
+                                          family=font_family)
             else:
                 self.plot.set_xticklabels([label + " (n=%d)" % kwargs['n_values'][i] for i, label in enumerate(kwargs['x_labels'])],
-                                          rotation=rot, ha=ha)
+                                          rotation=rot, ha=ha,
+                                          family=font_family)
 
         self.plot.set_xticks(ind)
         self.plot.set_xlim([min(ind) - (0.75 * width), max(ind) + (0.75 * width)])
