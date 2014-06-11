@@ -16,6 +16,9 @@ class Chart(object):
         self._fig.canvas.manager.set_window_title(name)
         self.plot = self._fig.add_subplot(1, 1, 1)
 
+        if 'ylim' in kwargs:
+            self.plot.set_ylim(kwargs['ylim'])
+
         if 'title' in kwargs:
             self._fig.suptitle(kwargs['title'], fontsize=20)
 
