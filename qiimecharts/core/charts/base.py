@@ -12,9 +12,12 @@ class Chart(object):
 
         self._fig = plt.figure(figsize=kwargs.get('dimension', (4, 3.5)),
                                dpi=kwargs.get('dpi', 80))
+        self._ax = plt.gca()
 
         self._fig.canvas.manager.set_window_title(name)
         self.plot = self._fig.add_subplot(1, 1, 1)
+        self.xylabel_family = kwargs.get('font_family', None)
+        self.xylabel_size = kwargs.get('fontsize', None)
 
         if 'ylim' in kwargs:
             self.plot.set_ylim(kwargs['ylim'])
@@ -93,12 +96,17 @@ class Chart(object):
                 raise Exception("'legend_outside' is not yet implemented")
                 self.plot.legend(self.elements[::-1], kwargs['y_labels'][::-1], loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True, prop={'size':kwargs['legend_size']})
 
-    def save(self, path=''):
+    def _finalize(self):
+        for label in self._ax.get_yticklabels() + self._ax.get_xticklabels():
+            label.set_fontsize(self.xylabel_size)
+            label.set_family(self.xylabel_family)
         self._fig.tight_layout()
         self._fig.subplots_adjust(top=0.85)
+
+    def save(self, path=''):
+        self._finalize()
         self._fig.savefig(path+ self.name + '.' + self.format, format=self.format, transparent=self.transparent)
 
     def show(self):
-        self._fig.tight_layout()
-        self._fig.subplots_adjust(top=0.85)
+        self._finalize()
         self._fig.show()
