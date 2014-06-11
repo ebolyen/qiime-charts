@@ -24,7 +24,7 @@ class Source(object):
                     if is_subset:
                         sample_ids.append(id_)
                     return is_subset
-                biom = self.biom.filter(f, axis='sample')
+                biom = self.biom.filterSamples(f)
                 samples = [self.mapping.get_sample(i) for i in sample_ids]
                 mapping = Mapping(sample_list=samples)
 
@@ -46,10 +46,12 @@ class Source(object):
             if self.biom is not None:
                 def f(value, id_, metadata):
                     return True if mapping.get_sample(id_) is not None else False
-                biom = self.biom.filter(f)
+                biom = self.biom.filterSamples(f)
+                samples = [self.mapping.get_sample(i) for i in biom.SampleIds]
+                mapping = Mapping(sample_list=samples)
 
             return Source(self.name, mapping, biom=biom)
-
+        
         return self._parse_descriptors(column, {"@biom":do_biom, "@mapping":do_mapping}, do_mapping)
 
 
@@ -112,6 +114,9 @@ class Source(object):
         p_column = ""
         tokenized = column.split(' ')
         if tokenized[0] in action_dict:
+            print action_dict
+            print tokenized[0]
+            print column[len(tokenized[0])+1:], action_dict[tokenized[0]]
             return action_dict[tokenized[0]](column[len(tokenized[0])+1:])
         else:
             return default(column)

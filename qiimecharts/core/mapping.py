@@ -1,6 +1,6 @@
 import csv
 
-class AllTrue(object):
+class _AllTrue(object):
     def __contains__(self, other):
         return True
 
@@ -23,7 +23,7 @@ class Mapping(object):
 
     def get_samples(self, column=None, values=None, unique=None):
         if values == '*':
-            values = AllTrue()
+            values = _AllTrue()
 
         if column is not None and values is not None:
             filtered_samples = []
