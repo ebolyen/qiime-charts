@@ -11,12 +11,15 @@ class StackedBar(Chart):
         n_data = invert(n_data)
 
         ind, width = self._even_spacing_factory(len(data), self.padding)
+        rot = kwargs.get('x_label_rotation', 90)
+        ha = kwargs.get('x_labels_alignment', 'center')
 
         if 'x_labels' in kwargs:
             if scaled:
-                self.plot.set_xticklabels(kwargs['x_labels'], rotation=90)
+                self.plot.set_xticklabels(kwargs['x_labels'], rotation=rot, ha=ha)
             else:
-                self.plot.set_xticklabels([label + " (n=%d)" % kwargs['n_values'][i] for i, label in enumerate(kwargs['x_labels'])], rotation=90)
+                self.plot.set_xticklabels([label + " (n=%d)" % kwargs['n_values'][i] for i, label in enumerate(kwargs['x_labels'])],
+                                          rotation=rot, ha=ha)
 
 
         self.plot.set_xticks(ind)
@@ -25,9 +28,9 @@ class StackedBar(Chart):
         bottom = 0
         self.elements = []
         for observation_data in n_data:
-            bar = self.plot.bar(ind, observation_data, width, 
+            bar = self.plot.bar(ind, observation_data, width,
                           color=self.colors.next(),
-                          bottom=bottom, 
+                          bottom=bottom,
                           align='center',
                           linewidth=0)
             self.elements.append(bar)
@@ -37,7 +40,7 @@ class StackedBar(Chart):
                 bottom = add_lists_pairwise(bottom, observation_data)
 
         self._load_legend(**kwargs)
-        
+
 
 
 
