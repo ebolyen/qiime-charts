@@ -39,6 +39,10 @@ class Chart(object):
         else:
             self.padding = 0.5
 
+        if 'fontsize' in kwargs:
+            self.plot.axes.yaxis.label.set_size(kwargs['fontsize'])
+            self.plot.axes.xaxis.label.set_size(kwargs['fontsize'])
+
         self.format = kwargs.get('format', 'png')
 
         if 'colors' not in kwargs:
