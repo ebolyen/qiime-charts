@@ -12,7 +12,7 @@ class StackedBar(Chart):
 
         ind, width = self._even_spacing_factory(len(data), self.padding)
         rot = kwargs.get('x_label_rotation', 90)
-        ha = kwargs.get('x_labels_alignment', 'center')
+        ha = kwargs.get('x_label_alignment', 'center')
 
         if 'x_labels' in kwargs:
             if scaled:
