@@ -15,6 +15,7 @@ class Configuration(object):
         self._build_sources()
         self._load_colors()
         self._load_strata()
+        self._load_graph_sets()
         self._load_graphs()
 
     def __run__(self):
@@ -75,6 +76,8 @@ class Configuration(object):
                             item[key] = self.stratifications[value]
                         elif key == 'source':
                             item[key] = self.sources[value]
+                        elif key == 'graph_set':
+                            item[key] = self.graph_sets[value]
                         elif key == 'data':
                             if isinstance(value, list):
                                 item[key] = recursive_link(value, item)
@@ -85,4 +88,11 @@ class Configuration(object):
 
         self.graphs = recursive_link(self.config['graphs'], self.config)
 
-
+    def _load_graph_sets(self):
+        if 'graph_sets' in self.config:
+            for key, value in self.config['graph_sets'].iteritems():
+                if 'subplot_shape' not in value:
+                    raise ConfigError("No subplot shape in graph_set: %s" % key)
+            self.graph_sets = self.config['graph_sets']
+        else:
+            self.graph_sets = {}

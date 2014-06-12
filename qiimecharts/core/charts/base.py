@@ -2,20 +2,43 @@
 from matplotlib import use
 use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 
 class Chart(object):
+    _graph_sets_written = set()
+
     def __init__(self, name, transparent=False, **kwargs):
+        if 'graph_set' in kwargs:
+            gs = kwargs['graph_set']
+            self._graph_set = id(gs)
+            rows, cols = kwargs['graph_set_shape']
+
+            if '_gs' not in gs:
+                gs_rows, gs_cols = gs['subplot_shape']
+                gs['figure'] = plt.figure()
+                gs['_gs'] = gridspec.GridSpec(gs_rows, gs_cols)
+                gs['subplot_offset'] = 0
+
+            self._fig = gs['figure']
+
+            so = gs['subplot_offset']
+            gs['subplot_offset'] += cols
+
+            self.plot = self._fig.add_subplot(gs['_gs'][:, so:so+cols])
+        else:
+            self._fig = plt.figure(figsize=kwargs.get('dimension', (4, 3.5)),
+                                   dpi=kwargs.get('dpi', 80))
+            self._fig.canvas.manager.set_window_title(name)
+            self.plot = self._fig.add_subplot(1, 1, 1)
+            self._graph_set = None
+
         self.elements = []
         self.transparent = transparent
         self.name = name
 
-        self._fig = plt.figure(figsize=kwargs.get('dimension', (4, 3.5)),
-                               dpi=kwargs.get('dpi', 80))
         self._ax = plt.gca()
 
-        self._fig.canvas.manager.set_window_title(name)
-        self.plot = self._fig.add_subplot(1, 1, 1)
         self.xylabel_family = kwargs.get('font_family', None)
         self.xylabel_size = kwargs.get('fontsize', None)
 
@@ -104,8 +127,14 @@ class Chart(object):
         self._fig.subplots_adjust(top=0.85)
 
     def save(self, path=''):
-        self._finalize()
-        self._fig.savefig(path+ self.name + '.' + self.format, format=self.format, transparent=self.transparent)
+        if self._graph_set is None:
+            self._finalize()
+            self._fig.savefig(path+ self.name + '.' + self.format, format=self.format, transparent=self.transparent)
+        else:
+            if self._graph_set not in Chart._graph_sets_written:
+                Chart._graph_sets_written.add(self._graph_set)
+                self._finalize()
+                self._fig.savefig(path+ self.name + '.' + self.format, format=self.format, transparent=self.transparent)
 
     def show(self):
         self._finalize()
