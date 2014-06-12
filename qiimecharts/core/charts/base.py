@@ -12,10 +12,10 @@ class Chart(object):
         if 'graph_set' in kwargs:
             gs = kwargs['graph_set']
             self._graph_set = id(gs)
-            rows, cols = kwargs['graph_set_shape']
+            gs_rows, gs_cols = gs['subplot_shape']
+            rows, cols = kwargs.get('dimension', (gs_rows, 2))
 
             if '_gs' not in gs:
-                gs_rows, gs_cols = gs['subplot_shape']
                 gs['figure'] = plt.figure()
                 gs['_gs'] = gridspec.GridSpec(gs_rows, gs_cols)
                 gs['subplot_offset'] = 0
