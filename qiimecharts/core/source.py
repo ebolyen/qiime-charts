@@ -49,7 +49,6 @@ class Source(object):
                 biom = self.biom.filterSamples(f)
                 samples = [self.mapping.get_sample(i) for i in biom.SampleIds]
                 mapping = Mapping(sample_list=samples)
-
             return Source(self.name, mapping, biom=biom)
 
         return self._parse_descriptors(column, {"@biom":do_biom, "@mapping":do_mapping}, do_mapping)

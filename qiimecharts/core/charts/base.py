@@ -55,10 +55,10 @@ class Chart(object):
             self.plot.axes.get_yaxis().set_ticklabels([''])
 
         if 'title' in kwargs:
-            self._fig.suptitle(kwargs['title'], fontsize=20)
+            self.plot.set_title(kwargs['title'], fontsize=self.xylabel_size)
 
         if 'y_label' in kwargs:
-            self.plot.set_ylabel(kwargs['y_label'])
+            self.plot.set_ylabel(kwargs['y_label'], fontsize=self.xylabel_size)
 
         if 'x_padding' in kwargs:
             self.padding = kwargs['x_padding']
