@@ -1,6 +1,6 @@
 import groupers as gp
 from charts.bar import StackedBar, Bar
-from charts.pie import Pie 
+from charts.pie import Pie
 from charts.legend import Legend
 
 def pie(name, data, y_stratification, title=None, legend=True, **kwargs):
@@ -56,7 +56,7 @@ def stacked_bar(name, data, y_stratification,
                 bar.insert(0, 0)
         bar_data.append(bar)
 
-    return StackedBar(name, bar_data, 
+    return StackedBar(name, bar_data,
                       scaled=scaled,
                       x_labels=x_labels,
                       y_labels=y_labels,
@@ -95,28 +95,14 @@ def bar(name, data, x_stratification, title=None, **kwargs):
         else:
             bar_data.append(0)
 
-    return Bar(name, bar_data, 
-               x_labels=x_labels, 
-               colors=colors, 
+    return Bar(name, bar_data,
+               x_labels=x_labels,
+               colors=colors,
                title=title, **kwargs)
 
 def get_chart(graph):
     return {
-        'legend': lambda : legend(graph['name'], graph['y_stratification'],
-                                title=(None if 'title' not in graph else graph['title']),
-                                dimension=(None if 'dimension' not in graph else graph['dimension']),
-                                legend_size=(None if 'legend_size' not in graph else graph['legend_size'])),
-        'stackedbar': lambda : stacked_bar(graph['name'],
-                                            graph['data'],
-                                            graph['y_stratification'],
-                                            title=(None if 'title' not in graph else graph['title']),
-                                            dimension=(None if 'dimension' not in graph else graph['dimension']),
-                                            scaled=(None if 'scaled' not in graph else graph['scaled']),
-                                            legend_size=(None if 'legend_size' not in graph else graph['legend_size']),
-                                            legend=(None if 'legend' not in graph else graph['legend'])),
-        'bar': lambda : bar(graph['name'],
-                            graph['data'],
-                            graph['x_stratification'],
-                            dimension=(None if 'dimension' not in graph else graph['dimension']),
-                            title=(None if 'title' not in graph else graph['title']))
+        'legend': lambda : legend(**graph),
+        'stackedbar': lambda : stacked_bar(**graph),
+        'bar': lambda : bar(**graph)
     }[graph['type']]()

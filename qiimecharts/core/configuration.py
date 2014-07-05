@@ -6,6 +6,7 @@ from source import Source
 from mapping import Mapping
 from qchart import get_chart
 from biom.parse import parse_biom_table
+from biom.util import biom_open
 
 class Configuration(object):
 
@@ -14,6 +15,7 @@ class Configuration(object):
         self._build_sources()
         self._load_colors()
         self._load_strata()
+        self._load_graph_sets()
         self._load_graphs()
 
     def __run__(self):
@@ -28,16 +30,15 @@ class Configuration(object):
             f = open(value['mapping'], 'U')
             mapping = Mapping(mapping_file_object=f)
             f.close()
-            
+
             biom = None
             restrict = None
             if 'biom' in value:
-                f = open(value['biom'], 'U')
-                biom = parse_biom_table(f)
-                f.close()
+                with biom_open(value['biom'], 'U') as f:
+                    biom = parse_biom_table(f)
 
             if 'restrict' in value:
-                restrict = (value['restrict']['column'], value['restrict']['values'])
+                restrict = (value['restrict']['column'], value['restrict']['values'], value['restrict'].get('unique', None))
 
             self.sources[key] = Source(name, mapping, biom=biom, restrict=restrict)
 
@@ -75,6 +76,8 @@ class Configuration(object):
                             item[key] = self.stratifications[value]
                         elif key == 'source':
                             item[key] = self.sources[value]
+                        elif key == 'graph_set':
+                            item[key] = self.graph_sets[value]
                         elif key == 'data':
                             if isinstance(value, list):
                                 item[key] = recursive_link(value, item)
@@ -85,4 +88,11 @@ class Configuration(object):
 
         self.graphs = recursive_link(self.config['graphs'], self.config)
 
-
+    def _load_graph_sets(self):
+        if 'graph_sets' in self.config:
+            for key, value in self.config['graph_sets'].iteritems():
+                if 'subplot_shape' not in value:
+                    raise ConfigError("No subplot shape in graph_set: %s" % key)
+            self.graph_sets = self.config['graph_sets']
+        else:
+            self.graph_sets = {}
