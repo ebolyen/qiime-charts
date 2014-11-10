@@ -24,7 +24,7 @@ class Source(object):
                     if is_subset:
                         sample_ids.append(id_)
                     return is_subset
-                biom = self.biom.filterSamples(f)
+                biom = self.biom.filter(f, inplace=False)
                 samples = [self.mapping.get_sample(i) for i in sample_ids]
                 mapping = Mapping(sample_list=samples)
 
@@ -41,13 +41,13 @@ class Source(object):
         def do_mapping(p_column):
             samples = self.mapping.get_samples(column=p_column, values=values, unique=unique)
             mapping = Mapping(sample_list=samples)
-
+            
             biom = None
             if self.biom is not None:
                 def f(value, id_, metadata):
                     return True if mapping.get_sample(id_) is not None else False
-                biom = self.biom.filterSamples(f)
-                samples = [self.mapping.get_sample(i) for i in biom.SampleIds]
+                biom = self.biom.filter(f, inplace=False)
+                samples = [self.mapping.get_sample(i) for i in biom.ids()]
                 mapping = Mapping(sample_list=samples)
             return Source(self.name, mapping, biom=biom)
 
@@ -145,7 +145,7 @@ class Source(object):
 
     def _metadata_column(self, column, is_observation, metadata_handler=None):
         result = {}
-        def collapse_metadata(metadata):
+        def collapse_metadata(id_, metadata):
             if column in metadata:
                 if metadata_handler:
                     return metadata_handler(metadata[column])
@@ -153,17 +153,17 @@ class Source(object):
             return "__unkown__"
 
         if is_observation:
-            t = self.biom.collapseObservationsByMetadata(collapse_metadata,
+            t = self.biom.collapse(collapse_metadata,
                                          include_collapsed_metadata=False,
-                                         norm=False)
-            for key, value in zip(t.ObservationIds, t.sum(axis="observation")):
+                                         norm=False, axis='observation')
+            for key, value in zip(t.ids(axis='observation'), t.sum(axis="observation")):
                 result[key] = value
 
         else:
-            t = self.biom.collapseSamplesByMetadata(collapse_metadata,
+            t = self.biom.collapse(collapse_metadata,
                                          include_collapsed_metadata=False,
                                          norm=False)
-            for key, value in zip(t.SampleIds, t.sum(axis="sample")):
+            for key, value in zip(t.ids(), t.sum(axis="sample")):
                 result[key] = value
         return result
 
